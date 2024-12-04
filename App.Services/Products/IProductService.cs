@@ -1,5 +1,4 @@
-﻿using App.Repositories.Products;
-using App.Services.Products.Create;
+﻿using App.Services.Products.Create;
 using App.Services.Products.Update;
 
 namespace App.Services.Products;
