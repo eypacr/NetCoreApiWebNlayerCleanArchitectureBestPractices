@@ -2,6 +2,7 @@
 using App.Repositories.Products;
 using App.Services.Products.Create;
 using App.Services.Products.Update;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace App.Services.Products;
@@ -18,6 +19,19 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         {
             Data = productsAsDto
         };
+    }
+
+    public async Task<ServiceResult<List<ProductDto>>> GetAllListAsync()
+    {
+        var products = await productRepository.GetAll().ToListAsync();
+
+        #region manuel mapping
+
+        var productsAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+
+        #endregion
+
+        return ServiceResult<List<ProductDto>>.Success(productsAsDto);
     }
 
     public async Task<ServiceResult<ProductDto?>> GetByIdAsync(int id)
