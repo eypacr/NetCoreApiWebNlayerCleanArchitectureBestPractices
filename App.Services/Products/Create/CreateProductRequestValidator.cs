@@ -1,11 +1,14 @@
-﻿using FluentValidation;
+﻿using App.Repositories.Products;
+using FluentValidation;
 
 namespace App.Services.Products.Create;
 
 public class CreateProductRequestValidator : AbstractValidator<CreateProductRequest>
 {
-    public CreateProductRequestValidator()
+    private readonly IProductRepository _productRepository;
+    public CreateProductRequestValidator(IProductRepository productRepository)
     {
+        _productRepository = productRepository;
         RuleFor(x => x.Name)
                //.NotNull().WithMessage("Ürün ismi gereklidir.")
                .NotEmpty().WithMessage("ürün ismi gereklidir.")
@@ -21,4 +24,23 @@ public class CreateProductRequestValidator : AbstractValidator<CreateProductRequ
         RuleFor(x => x.Stock)
             .InclusiveBetween(1, 100).WithMessage("stok adedi 1 ile 100 arasında olmalıdır");
     }
+    #region 2.way async validation
+
+    //private async Task<bool> MustUniqueProductNameAsync(string name, CancellationToken cancellationToken)
+    //{
+    //    return !await _productRepository.Where(x => x.Name == name).AnyAsync(cancellationToken);
+    //}
+
+    #endregion
+    #region 1.way sync validation
+
+    //private bool MustUniqueProductName(string name)
+    //{
+    //    return !_productRepository.Where(x => x.Name == name).Any();
+
+    //    // false => bir hata var.
+    //    // true => bir hata yok
+    //}
+
+    #endregion
 }
