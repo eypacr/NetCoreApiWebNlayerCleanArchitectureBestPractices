@@ -1,6 +1,7 @@
 ﻿using App.Services.Products;
 using App.Services.Products.Create;
 using App.Services.Products.Update;
+using App.Services.Products.UpdateStock;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.API.Controllers;
@@ -25,6 +26,17 @@ public class ProductsController(IProductService productService) : CustomBaseCont
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, UpdateProductRequest request) =>
             CreateActionResult(await productService.UpdateAsync(id, request));
+
+
+    //[HttpPut("UpdateStock")]
+    //public async Task<IActionResult> UpdateStock(UpdateProductStockRequest request) =>
+    //    CreateActionResult(await productService.UpdateStockAsync(request));
+
+
+    [HttpPatch("Stock")]
+    public async Task<IActionResult> UpdateStock(UpdateProductStockRequest request) =>
+        CreateActionResult(await productService.UpdateStockAsync(request));
+
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id) => CreateActionResult(await productService.DeleteAsync(id));

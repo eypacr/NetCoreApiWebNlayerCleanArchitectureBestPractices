@@ -2,7 +2,7 @@
 using App.Repositories.Products;
 using App.Services.Products.Create;
 using App.Services.Products.Update;
-using Microsoft.AspNetCore.Http.HttpResults;
+using App.Services.Products.UpdateStock;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
@@ -101,6 +101,24 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
         productRepository.Update(product);
         await unitOfWork.SaveChangesAsync();
+        return ServiceResult.Success(HttpStatusCode.NoContent);
+    }
+
+    public async Task<ServiceResult> UpdateStockAsync(UpdateProductStockRequest request)
+    {
+        var product = await productRepository.GetByIdAsync(request.ProductId);
+
+        if (product is null)
+        {
+            return ServiceResult.Fail("Product not found", HttpStatusCode.NotFound);
+        }
+
+
+        product.Stock = request.Quantity;
+
+        productRepository.Update(product);
+        await unitOfWork.SaveChangesAsync();
+
         return ServiceResult.Success(HttpStatusCode.NoContent);
     }
 
