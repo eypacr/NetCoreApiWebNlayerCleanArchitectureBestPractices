@@ -3,19 +3,20 @@ using App.Repositories.Products;
 using App.Services.Products.Create;
 using App.Services.Products.Update;
 using App.Services.Products.UpdateStock;
+using AutoMapper;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace App.Services.Products;
 
-public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork, IValidator<CreateProductRequest> createProdcutRequestValidator) : IProductService
+public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork, IValidator<CreateProductRequest> createProdcutRequestValidator, IMapper mapper) : IProductService
 {
     public async Task<ServiceResult<List<ProductDto>>> GetTopPriceProductsAsync(int count)
     {
         var products = await productRepository.GetTopPriceProductsAsync(count);
 
-        var productsAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+        var productsAsDto = mapper.Map<List<ProductDto>>(products);
 
         return new ServiceResult<List<ProductDto>>()
         {
@@ -29,9 +30,11 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
         #region manuel mapping
 
-        var productsAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+        //var productsAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
 
         #endregion
+
+        var productsAsDto = mapper.Map<List<ProductDto>>(products);
 
         return ServiceResult<List<ProductDto>>.Success(productsAsDto);
     }
@@ -48,9 +51,11 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
         #region manuel mapping
 
-        var productsAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+        //var productsAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
 
         #endregion
+
+        var productsAsDto = mapper.Map<List<ProductDto>>(products);
 
         return ServiceResult<List<ProductDto>>.Success(productsAsDto);
     }
@@ -66,9 +71,11 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
         #region manuel mapping
 
-        var productAsDto = new ProductDto(product!.Id, product.Name, product.Price, product.Stock);
+        //var productAsDto = new ProductDto(product!.Id, product.Name, product.Price, product.Stock);
 
         #endregion
+
+        var productAsDto = mapper.Map<ProductDto>(product);
 
         return ServiceResult<ProductDto>.Success(productAsDto)!;
     }
@@ -95,12 +102,15 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
         #endregion
 
-        var product = new Product()
-        {
-            Name = request.Name,
-            Price = request.Price,
-            Stock = request.Stock,
-        };
+        //var product = new Product()
+        //{
+        //    Name = request.Name,
+        //    Price = request.Price,
+        //    Stock = request.Stock,
+        //};
+
+        var product = mapper.Map<Product>(request);
+
         await productRepository.AddAsync(product);
         await unitOfWork.SaveChangesAsync();
         return ServiceResult<CreateProductResponse>.SuccessAsCreated(new CreateProductResponse(product.Id),
@@ -109,19 +119,23 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
     public async Task<ServiceResult> UpdateAsync(int id, UpdateProductRequest request)
     {
-        var product = await productRepository.GetByIdAsync(id);
+        var isProductNameExist =
+               await productRepository.Where(x => x.Name == request.Name && x.Id != id).AnyAsync();
 
-        if (product is null)
+
+        if (isProductNameExist)
         {
-            return ServiceResult.Fail("Product not found", HttpStatusCode.NotFound);
+            return ServiceResult.Fail("ürün ismi veritabanında bulunmaktadır.",
+                HttpStatusCode.BadRequest);
         }
 
-        product.Name = request.Name;
-        product.Price = request.Price;
-        product.Stock = request.Stock;
+
+        var product = mapper.Map<Product>(request);
+        product.Id = id;
 
         productRepository.Update(product);
         await unitOfWork.SaveChangesAsync();
+
         return ServiceResult.Success(HttpStatusCode.NoContent);
     }
 
