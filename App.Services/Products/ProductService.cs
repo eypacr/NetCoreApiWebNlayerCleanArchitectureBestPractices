@@ -63,12 +63,6 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
     {
         var product = await productRepository.GetByIdAsync(id);
 
-
-        if (product is null)
-        {
-            return ServiceResult<ProductDto?>.Fail("Product not found", HttpStatusCode.NotFound);
-        }
-
         #region manuel mapping
 
         //var productAsDto = new ProductDto(product!.Id, product.Name, product.Price, product.Stock);
@@ -151,7 +145,6 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
             return ServiceResult.Fail("Product not found", HttpStatusCode.NotFound);
         }
 
-
         product.Stock = request.Quantity;
 
         productRepository.Update(product);
@@ -163,12 +156,6 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
     public async Task<ServiceResult> DeleteAsync(int id)
     {
         var product = await productRepository.GetByIdAsync(id);
-
-        if (product is null)
-        {
-            return ServiceResult.Fail("Product not found", HttpStatusCode.NotFound);
-        }
-
         productRepository.Delete(product);
         await unitOfWork.SaveChangesAsync();
         return ServiceResult.Success(HttpStatusCode.NoContent);

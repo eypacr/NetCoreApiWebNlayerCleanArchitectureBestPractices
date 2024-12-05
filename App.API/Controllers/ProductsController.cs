@@ -1,4 +1,6 @@
-﻿using App.Services.Products;
+﻿using App.Repositories.Products;
+using App.Services.Filters;
+using App.Services.Products;
 using App.Services.Products.Create;
 using App.Services.Products.Update;
 using App.Services.Products.UpdateStock;
@@ -10,6 +12,7 @@ public class ProductsController(IProductService productService) : CustomBaseCont
     [HttpGet]
     public async Task<IActionResult> GetAll() => CreateActionResult(await productService.GetAllListAsync());
 
+    [ServiceFilter(typeof(NotFoundFilter<Product, int>))]
     [HttpGet("{id:int}")]//https://localhost:5000/api/products?id=2
     public async Task<IActionResult> GetById(int id) => CreateActionResult(await productService.GetByIdAsync(id));
 
@@ -23,6 +26,7 @@ public class ProductsController(IProductService productService) : CustomBaseCont
         return CreateActionResult(await productService.CreateAsync(request));
     }
 
+    [ServiceFilter(typeof(NotFoundFilter<Product, int>))]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, UpdateProductRequest request) =>
             CreateActionResult(await productService.UpdateAsync(id, request));
@@ -37,7 +41,7 @@ public class ProductsController(IProductService productService) : CustomBaseCont
     public async Task<IActionResult> UpdateStock(UpdateProductStockRequest request) =>
         CreateActionResult(await productService.UpdateStockAsync(request));
 
-
+    [ServiceFilter(typeof(NotFoundFilter<Product, int>))]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id) => CreateActionResult(await productService.DeleteAsync(id));
 }

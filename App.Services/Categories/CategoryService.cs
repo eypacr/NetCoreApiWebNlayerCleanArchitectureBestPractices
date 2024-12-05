@@ -55,11 +55,6 @@ public class CategoryService(ICategoryRepository categoryRepository, IUnitOfWork
     {
         var category = await categoryRepository.GetByIdAsync(id);
 
-        if (category is null)
-        {
-            return ServiceResult<CategoryDto>.Fail("kategori bulunamadı.", HttpStatusCode.NotFound);
-        }
-
         var categoryAsDto = mapper.Map<CategoryDto>(category);
 
         return ServiceResult<CategoryDto>.Success(categoryAsDto);
@@ -68,11 +63,6 @@ public class CategoryService(ICategoryRepository categoryRepository, IUnitOfWork
     public async Task<ServiceResult<CategoryWithProductsDto>> GetCategoryWithProductsAsync(int categoryId)
     {
         var category = await categoryRepository.GetCategoryWithProductsAsync(categoryId);
-
-        if (category is null)
-        {
-            return ServiceResult<CategoryWithProductsDto>.Fail("kategori bulunamadı.", HttpStatusCode.NotFound);
-        }
 
         var categoryAsDto = mapper.Map<CategoryWithProductsDto>(category);
 

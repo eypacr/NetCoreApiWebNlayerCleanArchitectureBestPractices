@@ -1,5 +1,6 @@
 ﻿using App.Services.Categories;
 using App.Services.ExceptionHandlers;
+using App.Services.Filters;
 using App.Services.Products;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -17,6 +18,8 @@ public static class ServiceExtensions
         services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ICategoryService, CategoryService>();
+
+        services.AddScoped(typeof(NotFoundFilter<,>));
 
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());

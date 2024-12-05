@@ -3,7 +3,7 @@
 namespace App.Repositories.Categories;
 
 public class CategoryRepository(AppDbContext context)
-        : GenericRepository<Category>(context), ICategoryRepository
+        : GenericRepository<Category, int>(context), ICategoryRepository
 {
     public Task<Category?> GetCategoryWithProductsAsync(int id)
     {
