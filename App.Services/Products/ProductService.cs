@@ -82,6 +82,9 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
     public async Task<ServiceResult<CreateProductResponse>> CreateAsync(CreateProductRequest request)
     {
+        //throw new CriticalException("kritik seviye bir hata meydana geldi");
+        //throw new Exception("db hatası");
+
         //async manuel service business check
         var anyProduct = await productRepository.Where(x => x.Name == request.Name).AnyAsync();
 
