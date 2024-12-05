@@ -4,3 +4,38 @@ GET {{App.API_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+### Get all products
+GET {{App.API_HostAddress}}/api/products
+
+###
+
+### Get paged products
+GET {{App.API_HostAddress}}/api/products/1/10
+###
+
+### Create a new product
+POST {{App.API_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "NewPro3",
+  "description": "Product description",
+  "price": 100.0,
+  "stock": 50,
+  "CategoryId":50
+}
+###
+
+### Update a product
+PUT {{App.API_HostAddress}}/api/products/134
+Content-Type: application/json
+
+{
+  "name": "product2",
+  "description": "Updated description",
+  "price": 150.0,
+  "stock": 30,
+  "CategoryId":50
+}
+###
