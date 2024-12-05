@@ -1,5 +1,6 @@
 ﻿using App.Repositories.Products;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Services.Products.Create;
 

@@ -3,12 +3,13 @@ using App.Repositories.Products;
 using App.Services.Products.Create;
 using App.Services.Products.Update;
 using App.Services.Products.UpdateStock;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace App.Services.Products;
 
-public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork) : IProductService
+public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork, IValidator<CreateProductRequest> createProdcutRequestValidator) : IProductService
 {
     public async Task<ServiceResult<List<ProductDto>>> GetTopPriceProductsAsync(int count)
     {
@@ -74,6 +75,26 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
     public async Task<ServiceResult<CreateProductResponse>> CreateAsync(CreateProductRequest request)
     {
+        //async manuel service business check
+        var anyProduct = await productRepository.Where(x => x.Name == request.Name).AnyAsync();
+
+        if (anyProduct)
+        {
+            return ServiceResult<CreateProductResponse>.Fail("ürün ismi veritabanında bulunmaktadır.",
+                HttpStatusCode.NotFound);
+        }
+
+        #region async manuel fluent validation business check
+
+        //var validationResult = await createProdcutRequestValidator.ValidateAsync(request);
+        //if (!validationResult.IsValid)
+        //{
+        //    return ServiceResult<CreateProductResponse>.Fail(
+        //        validationResult.Errors.Select(x => x.ErrorMessage).ToList());
+        //}
+
+        #endregion
+
         var product = new Product()
         {
             Name = request.Name,
