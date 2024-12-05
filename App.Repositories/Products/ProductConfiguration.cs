@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace App.Repositories.Products;
-public class ProductConfiguration : IEntityTypeConfiguration<Product>
+public class CategoryConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> builder)
     {
