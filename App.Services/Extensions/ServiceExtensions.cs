@@ -1,11 +1,12 @@
-﻿using App.Services.Products;
-using FluentValidation.AspNetCore;
+﻿using App.Services.Categories;
+using App.Services.ExceptionHandlers;
+using App.Services.Products;
 using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Microsoft.AspNetCore.Mvc;
-using App.Services.ExceptionHandlers;
 
 namespace App.Services.Extensions;
 
@@ -15,6 +16,7 @@ public static class ServiceExtensions
     {
         services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<ICategoryService, CategoryService>();
 
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
